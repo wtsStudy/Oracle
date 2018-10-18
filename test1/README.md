@@ -45,6 +45,6 @@ GROUP BY R.REGION_NAME, R.REGION_ID
 HAVING R.REGION_ID IN ('1', '3');
 ```
 运行结果：
-![运行结果](https://github.com/wtsStudy/Oracle/edit/master/test1/query_3.PNG)
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/query_3.png)
 
 >根据前面的示例运行分析，我仿照查询2的语句，设计了我自己的查询语句，以查询人力资源管理系统中的表COUNTRY和REGION两张表，国家分别在欧洲（Europe）与亚洲(Asia)地区的个数。
