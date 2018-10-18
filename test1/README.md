@@ -19,7 +19,7 @@ and d.department_name in ('IT'，'Sales')
 GROUP BY department_name;
 ```
 运行结果：
-![运行结果](https://github.com/wtsStudy/Oracle/edit/master/test1/query_1.PNG)
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/query_1.png)
 
 - 查询2：
 ```SQL
@@ -31,7 +31,7 @@ GROUP BY department_name
 HAVING d.department_name in ('IT'，'Sales');
 ```
 运行结果：
-![运行结果](https://github.com/wtsStudy/Oracle/edit/master/test1/query_2.PNG)
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/query_2.PNG)
 
 >我认为第二条查询语句更优。WHERE是一个约束声明，在查询数据库的结果返回之前对数据库中的查询条件进行约束，在结果返回之前起作用；HAVING是一个过滤声明，所谓过滤是在查询数据库的结果返回之后进行过滤，在结果返回之后起作用。
 
