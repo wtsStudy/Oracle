@@ -31,7 +31,7 @@ GRANT SELECT ON MYVIEW_WTS TO HR;
 ```
 
 运行结果：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/query_1.png)
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/对象创建_共享_设置正确.png )
 
 - 第3步：用户HR连接到pdborcl，查询NEW_USER_WTS授予它的视图MYVIEW_WTS
 
@@ -40,4 +40,4 @@ SELECT * FROM NEW_USER_WTS.MYVIEW_WTS;
 ```
 
 运行结果：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/query_1.png)
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master//test2/HR查看被授予的视图.png)
