@@ -22,7 +22,7 @@ GRANT CON_RES_VIEW_WTS TO NEW_USER_WTS;
 ```
 
 运行结果：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/query_1.png)
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
 
 - 第2步：新用户NEW_USER_WTS连接到pdborcl，创建表MYTABLE_WTS和视图MYVIEW_WTS，插入数据，最后将MYVIEW_WTS的SELECT对象权限授予HR用户。
 
