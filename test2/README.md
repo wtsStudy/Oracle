@@ -41,3 +41,5 @@ SELECT * FROM NEW_USER_WTS.MYVIEW_WTS;
 
 运行结果：
 ![运行结果](https://github.com/wtsStudy/Oracle/blob/master//test2/HR查看被授予的视图.png)
+
+## 实验
