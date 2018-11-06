@@ -17,7 +17,7 @@
 用户名：NEW_USER_WTS; 设置主表主键 order_id, 从表外键 order_id; 主表的分区策略是按照日期范围--2016，2017，2018，分别对应分区USERS, USERS02,USERS03。
 在主表orders和从表order_details之间建立引用分区
 在NEW_USER_WTS用户中创建两个表：orders（订单表）和order_details（订单详表），两个表通过列order_id建立主外键关联。orders表按范围分区进行存储，order_details使用引用分区进行存储。
-创建orders表的部分语句是：
+创建orders表的语句是：
 
 ```sql
 CREATE TABLE ORDERS
@@ -90,7 +90,7 @@ from orders;
 ```
 
 - 主表数据概览：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区查询_PartitionBefore2017.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
 
 ```sql
 //从表中插入单条数据的sql语句
@@ -103,8 +103,8 @@ select *
 from order_details;
 ```
 
-- 主表数据概览：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区查询_执行计划.png )
+- 从表数据概览：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区从表数据概览.png )
 
 ## 3.联合查询主表和从表（分区）
 ```sql
@@ -129,7 +129,7 @@ ON (orders.order_id = order_details.order_id);
 ## 4.联合查询两张表（不分区）；对比实验分析
 ```sql
 //查询两张表的数据（所有），表未分区
-select * from orders, order_details where orders.order_id = order_details.order_id(+);
+select * from orders_nopartition, order_details_nopartition where orders_nopartition.order_id = order_details_nopartition.order_id(+);
 ```
 - 查询结果概览：
 ![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/未分区查询_查询结果.png )
