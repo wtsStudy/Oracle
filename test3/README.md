@@ -79,32 +79,70 @@ PARTITION BY REFERENCE (order_details_fk1);
 
 先插入主表数据，再插入从表数据，三个表空间的数据分布是平均的。
 ```sql
+//主表中插入单条数据的sql语句
 INSERT INTO orders(customer_name, customer_tel, order_date, employee_id, trade_receivable, discount) VALUES('WANG', '152', to_date ( '2016-12-20 18:31:34' , 'YYYY-MM-DD HH24:MI:SS' ), 001, 16, 6);
+INSERT INTO orders(customer_name, customer_tel, order_date, employee_id, trade_receivable, discount) VALUES('ZHAO', '152', to_date ( '2017-12-20 18:31:34' , 'YYYY-MM-DD HH24:MI:SS' ), 001, 17, 7);
+INSERT INTO orders(customer_name, customer_tel, order_date, employee_id, trade_receivable, discount) VALUES('LI', '152', to_date ( '2018-12-20 18:31:34' , 'YYYY-MM-DD HH24:MI:SS' ), 001, 18, 8);
+//主表中重复插入，达到万条数据，，说明：创建了序列 SEQ_ID， 触发器tr_IDADD（当插入主表单条数据时候自动插入order_id值【唯一值】）
+insert into orders
+select *
+from orders;
 ```
-# 修改至此处！！！
-- autoextensible是显示表空间中的数据文件是否自动增加。
-- MAX_MB是指数据文件的最大容量。
 
-## 实验参考
-- Oracle地址：202.115.82.8 用户名：system,hr,你的用户名 ， 密码123， 数据库名称：pdborcl，端口号：1521
-- ssh oracle@202.115.82.8
+- 主表数据概览：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
 
-- SQL-DEVELOPER修改用户的操作界面：
-![](./img/sqldevelop修改用户.png)
+```sql
+//从表中插入单条数据的sql语句
+insert into order_details(id, PRODUCT_ID, PRODUCT_NUM, PRODUCT_PRICE) VALUES(233, 233, 233, 255.66);
+insert into order_details(id, PRODUCT_ID, PRODUCT_NUM, PRODUCT_PRICE) VALUES(332, 332, 332, 266.55);
+insert into order_details(id, PRODUCT_ID, PRODUCT_NUM, PRODUCT_PRICE) VALUES(323, 323, 323, 265.56);
+//从表中重复插入，达到万条数据，，说明：创建了序列 SEQ_ID， 触发器tr_DETAILS_IDADD（当插入从表单条数据时候自动插入order_id值【唯一值】）
+insert into order_details
+select *
+from order_details;
+```
 
-- sqldeveloper授权对象的操作界面：
-![](./img/sqldevelop授权对象.png)
+- 主表数据概览：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
 
-## 实验注意事项，完成时间： 2018-11-9日前上交
-- 请按时完成实验，过时扣分。
-- 查询语句及分析文档`必须提交`到：你的Oracle项目中的test3目录中。
-- 上交后，通过这个地址应该可以打开你的源码：https://github.com/你的用户名/Oracle/tree/master/test3
-- 实验分析及结果文档说明书用Markdown格式编写。
-- 实验最后要写到纸质实验报告中。
+## 3.联合查询主表和从表（分区）
+```sql
+//查询PARTITION_BEFORE_2017分区中两张表的数据（部分列）
+SELECT
+    orders.order_id,
+    orders.order_date,
+    order_details.order_id,
+    TRADE_RECEIVABLE,
+    PRODUCT_ID,
+    PRODUCT_PRICE
+FROM orders partition (PARTITION_BEFORE_2017) LEFT JOIN order_details partition (PARTITION_BEFORE_2017)
+ON (orders.order_id = order_details.order_id);
+```
 
-## 评分标准
-- 实验独立完成，有详细的分析文档，文档中写明自己的用户名。（总分20分）
-- 表创建正确（总分10分）
-- 分区策略设计正确（总分20分）
-- SQL语句正确（总分20分）
-- 执行计划分析正确（总分30分）
+- 查询结果概览：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
+
+- 查询执行计划：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
+
+## 4.联合查询两张表（不分区）；对比实验分析
+```sql
+//查询两张表的数据（所有），表未分区
+select * from orders, order_details where orders.order_id = order_details.order_id(+);
+```
+- 查询结果概览：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
+
+- 查询执行计划：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
+
+- 对比分析：
+两张表中数据均为12288条，从表ORDER_DETAILS跟主表ORDERS建立了主外键，从表的分区策略同
+主表一样。
+我对分区表的partition_before_2017分区进行了查询，查询结果完全正确，可以看出CPU的cost=392,
+consistent gets=153，相较于未分区的表查询---CPU的cost=34,consistent gets=91，，分区表查
+询的资源占比明显高出很多。不过分区查询的时间平均为1.5秒，未分区查询的时间平均为3.5秒，显然分区
+后表的查询速度快了不少。
+对于表的分区，逻辑上表实质还是一张完整的表，不过是把数据按照某种分区判定方法（范围分区，Hash分区，
+List分区，混合分区）而存放在多个表空间上面，好处明显就是查询时候不会扫描完整张表，提高了查询速度。
