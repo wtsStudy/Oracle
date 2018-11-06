@@ -90,7 +90,7 @@ from orders;
 ```
 
 - 主表数据概览：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区查询_PartitionBefore2017.png )
 
 ```sql
 //从表中插入单条数据的sql语句
@@ -104,7 +104,7 @@ from order_details;
 ```
 
 - 主表数据概览：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区查询_执行计划.png )
 
 ## 3.联合查询主表和从表（分区）
 ```sql
@@ -121,10 +121,10 @@ ON (orders.order_id = order_details.order_id);
 ```
 
 - 查询结果概览：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区查询_PartitionBefore2017.png )
 
 - 查询执行计划：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区查询_执行计划.png )
 
 ## 4.联合查询两张表（不分区）；对比实验分析
 ```sql
@@ -132,10 +132,10 @@ ON (orders.order_id = order_details.order_id);
 select * from orders, order_details where orders.order_id = order_details.order_id(+);
 ```
 - 查询结果概览：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/未分区查询_查询结果.png )
 
 - 查询执行计划：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test2/步骤一_运行结果.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/未分区查询_执行计划.png )
 
 - 对比分析：
 两张表中数据均为12288条，从表ORDER_DETAILS跟主表ORDERS建立了主外键，从表的分区策略同
