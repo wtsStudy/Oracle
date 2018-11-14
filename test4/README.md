@@ -154,6 +154,7 @@ WHERE o.ORDER_ID=566 and o.ORDER_ID=d.ORDER_ID and d.PRODUCT_NAME=p.PRODUCT_NAME
 - 实现查询的sql语句：无
 
 - 查询结果截图：无
+
 6.查询部门表，同时显示部门的负责人姓名。
 - 实现查询的sql语句：
 ```sql
@@ -163,6 +164,7 @@ WHERE (d.department_id= e.department_id and e.employee_id=1) or (d.department_id
 
 - 查询结果截图：
 ![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/查询6_部门名和负责人.png )
+
 7.查询部门表，统计每个部门的销售总金额。
 - 实现查询的sql语句：
 ```sql
