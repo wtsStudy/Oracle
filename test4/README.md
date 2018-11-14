@@ -109,21 +109,71 @@ END;
 
 ###  查询数据：
 1.查询某个员工的信息
+- 实现查询的sql语句：
+```sql
+select * from employees where name='WANG';
+```
+
 - 查询结果截图：
 ![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
 
 2.递归查询某个员工及其所有下属，子下属员工。
+- 实现查询的sql语句：
+```sql
+select * from employees e start with e.EMPLOYEE_ID=2 connect by e.MANAGER_ID=prior e.EMPLOYEE_ID;
+```
+
 - 查询结果截图：
 ![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
-3.查询订单表，并且包括订单的订单应收货款: Trade_Receivable= sum(订单详单表.ProductNum*订单详单表.ProductPrice)- Discount。
+
+3.查询订单表，并且包括订单的订单应收货款:Trade_Receivable值在触发器已经实现了计算
+- 实现查询的sql语句：
+```sql
+select * from orders;
+```
+
+- 查询结果截图：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+
 4.查询订单详表，要求显示订单的客户名称和客户电话，产品类型用汉字描述。
+- 实现查询的sql语句：
+```sql
+SELECT CUSTOMER_NAME, CUSTOMER_TEL, PRODUCT_TYPE FROM ORDERS o, ORDER_DETAILS d, PRODUCTS p 
+WHERE o.ORDER_ID=566 and o.ORDER_ID=d.ORDER_ID and d.PRODUCT_NAME=p.PRODUCT_NAME;
+```
+
+- 查询结果截图：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+
 5.查询出所有空订单，即没有订单详单的订单。
+- 因为不存在空订单，，所以没有查询。。
+- 实现查询的sql语句：无
+
+- 查询结果截图：无
 6.查询部门表，同时显示部门的负责人姓名。
+- 实现查询的sql语句：
+```sql
+SELECT DEPARTMENT_NAME AS "部门名", NAME AS "负责人" FROM DEPARTMENTS d, EMPLOYEES e
+WHERE (d.department_id= e.department_id and e.employee_id=1) or (d.department_id= e.department_id and e.employee_id=3);
+```
+
+- 查询结果截图：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
 7.查询部门表，统计每个部门的销售总金额。
+- 实现查询的sql语句：
+```sql
+SELECT SUM(TRADE_RECEIVABLE), DEPARTMENT_NAME AS "部门名称" FROM ORDERS partition(PARTITION_BEFORE_2019), DEPARTMENTS d
+where d.department_id=2
+group by d.department_name;
 
+	SELECT SUM(TRADE_RECEIVABLE), DEPARTMENT_NAME AS "部门名称" FROM ORDERS partition(PARTITION_BEFORE_2018), DEPARTMENTS d
+where d.department_id=1
+group by d.department_name;
 
-## 评分标准
-- 实验独立完成，有详细的分析文档，文档中写明自己的用户名。（总分20分）
-- 表创建正确（总分30分）
-- 分区策略设计正确（总分20分）
-- SQL语句正确（总分30分）
+SELECT SUM(TRADE_RECEIVABLE), DEPARTMENT_NAME AS "部门名称" FROM ORDERS partition(PARTITION_BEFORE_2017), DEPARTMENTS d
+where d.department_id=1
+group by d.department_name;
+```
+
+- 查询结果截图：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
