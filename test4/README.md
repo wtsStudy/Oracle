@@ -11,19 +11,19 @@
 要求至少有1万个订单，每个订单至少有4个详单。至少有两个部门，每个部门至少有1个员工，其中只有一个人没有领导，一个领导至少有一个下属，并且它的下属是另一个人的领导（比如A领导B，B领导C）。（注：ORDERS表和ORDER_DETAILS表是在实验三基础上依照本次实验四的建表要求做了些许修改后使用的）
 
 - ORDERS表数据概览：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/数据_ORDERS.png )
 
 - ORDER_DETAILS表数据概览：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/数据_ORDER_DETAILS.png )
 
 - 部门表DEPARTMENTS数据全览：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/数据_DEPARTMENTS.png )
 
 - 产品表PRODUCTS数据全览：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/数据_PRODUCTS.png )
 
 - 员工表EMPLOYEES数据全览：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/数据_EMPLOYEES.png )
 
 ###  序列的应用
 插入ORDERS和ORDER_DETAILS 两个表的数据时，主键ORDERS.ORDER_ID, ORDER_DETAILS.ID的值必须通过序列SEQ_ORDER_ID取得，不能手工输入一个数字。
@@ -101,10 +101,14 @@ END;
 ```
 
 - 触发器生效对比展示（修改前）：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/同步更新_修改前_ORDER_DETAILS.png )
+
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/同步更新_修改前_ORDERS.png )
 
 - 触发器生效对比展示（修改后）：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/同步更新_修改后_ORDER_DETAILS.png )
+
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/同步更新_修改后_ORDERS.png )
 
 
 ###  查询数据：
@@ -115,7 +119,7 @@ select * from employees where name='WANG';
 ```
 
 - 查询结果截图：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/查询1_某个员工信息.png )
 
 2.递归查询某个员工及其所有下属，子下属员工。
 - 实现查询的sql语句：
@@ -124,7 +128,7 @@ select * from employees e start with e.EMPLOYEE_ID=2 connect by e.MANAGER_ID=pri
 ```
 
 - 查询结果截图：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/查询2_递归查询.png )
 
 3.查询订单表，并且包括订单的订单应收货款:Trade_Receivable值在触发器已经实现了计算
 - 实现查询的sql语句：
@@ -133,7 +137,7 @@ select * from orders;
 ```
 
 - 查询结果截图：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/查询3_应收货款.png )
 
 4.查询订单详表，要求显示订单的客户名称和客户电话，产品类型用汉字描述。
 - 实现查询的sql语句：
@@ -143,7 +147,7 @@ WHERE o.ORDER_ID=566 and o.ORDER_ID=d.ORDER_ID and d.PRODUCT_NAME=p.PRODUCT_NAME
 ```
 
 - 查询结果截图：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/查询4_客户名字等等.png )
 
 5.查询出所有空订单，即没有订单详单的订单。
 - 因为不存在空订单，，所以没有查询。。
@@ -158,7 +162,7 @@ WHERE (d.department_id= e.department_id and e.employee_id=1) or (d.department_id
 ```
 
 - 查询结果截图：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/查询6_部门名和负责人.png )
 7.查询部门表，统计每个部门的销售总金额。
 - 实现查询的sql语句：
 ```sql
@@ -176,4 +180,4 @@ group by d.department_name;
 ```
 
 - 查询结果截图：
-![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test4/查询7_部门销售总金额.png )
