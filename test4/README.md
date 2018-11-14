@@ -28,18 +28,98 @@
 ###  序列的应用
 插入ORDERS和ORDER_DETAILS 两个表的数据时，主键ORDERS.ORDER_ID, ORDER_DETAILS.ID的值必须通过序列SEQ_ORDER_ID取得，不能手工输入一个数字。
 在实验三中我已经采用了序列加触发器的方式来插入ORDERS表和ORDER_DETAILS表的数据（自动插入ORDER_ID值）。
+```sql
+//创建序列的语句
+create sequence SEQ_ID
+minvalue 1
+maxvalue 99999
+start with 1
+increment by 1
+cache 20
+order;
+```
 
 ###  触发器的应用：
 维护ORDER_DETAILS的数据时（insert,delete,update）要同步更新ORDERS表订单应收货款ORDERS.Trade_Receivable的值。
+我在实验三中已经创建成功了自动插入order_id值的触发器，本次实验四给出同步更新ORDERS表订单应收货款ORDERS.Trade_Receivable的值的触发器即可。
+- 第一步————先创建好触发器存储临时ORDER_ID的临时表ORDER_ID_TEMP
+
+```sql
+//创建临时表ORDER_ID_TEMP
+CREATE GLOBAL TEMPORARY TABLE "ORDER_ID_TEMP"
+   (	"ORDER_ID" NUMBER(10,0) NOT NULL ENABLE,
+	 CONSTRAINT "ORDER_ID_TEMP_PK" PRIMARY KEY ("ORDER_ID") ENABLE
+   ) ON COMMIT DELETE ROWS ;
+
+   COMMENT ON TABLE "ORDER_ID_TEMP"  IS '用于触发器存储临时ORDER_ID';
+```
+
+- 第二步————创建插入order_id数据到临时表ORDER_ID_TEMP的触发器
+```sql
+//给order_id_temp临时表插入order_id数据的触发器：
+CREATE OR REPLACE EDITIONABLE TRIGGER "ORDER_DETAILS_ROW_TRIG"
+AFTER DELETE OR INSERT OR UPDATE  ON ORDER_DETAILS
+FOR EACH ROW
+BEGIN
+  --DBMS_OUTPUT.PUT_LINE(:NEW.ORDER_ID);
+  IF :NEW.ORDER_ID IS NOT NULL THEN
+    MERGE INTO ORDER_ID_TEMP A
+    USING (SELECT 1 FROM DUAL) B
+    ON (A.ORDER_ID=:NEW.ORDER_ID)
+    WHEN NOT MATCHED THEN
+      INSERT (ORDER_ID) VALUES(:NEW.ORDER_ID);
+  END IF;
+  IF :OLD.ORDER_ID IS NOT NULL THEN
+    MERGE INTO ORDER_ID_TEMP A
+    USING (SELECT 1 FROM DUAL) B
+    ON (A.ORDER_ID=:OLD.ORDER_ID)
+    WHEN NOT MATCHED THEN
+      INSERT (ORDER_ID) VALUES(:OLD.ORDER_ID);
+  END IF;
+END;
+```
+
+- 第三步————创建同步修改 TRADE_RECEIVABLE 值的触发器ORDER_DETAILS_SNTNS_TRIG
+```sql
+CREATE OR REPLACE EDITIONABLE TRIGGER "ORDER_DETAILS_SNTNS_TRIG"
+AFTER DELETE OR INSERT OR UPDATE ON ORDER_DETAILS
+declare
+  m number(8,2);
+BEGIN
+  FOR R IN (SELECT ORDER_ID FROM ORDER_ID_TEMP)
+  LOOP
+    select sum(PRODUCT_NUM*PRODUCT_PRICE) into m from ORDER_DETAILS
+      where ORDER_ID=R.ORDER_ID;
+    if m is null then
+      m:=0;
+    end if;
+    UPDATE ORDERS SET TRADE_RECEIVABLE = m - discount
+      WHERE ORDER_ID=R.ORDER_ID;
+  END LOOP;
+  delete from ORDER_ID_TEMP;
+END;
+```
+
+- 触发器生效对比展示（修改前）：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+
+- 触发器生效对比展示（修改后）：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+
 
 ###  查询数据：
-    1.查询某个员工的信息
-    2.递归查询某个员工及其所有下属，子下属员工。
-    3.查询订单表，并且包括订单的订单应收货款: Trade_Receivable= sum(订单详单表.ProductNum*订单详单表.ProductPrice)- Discount。
-    4.查询订单详表，要求显示订单的客户名称和客户电话，产品类型用汉字描述。
-    5.查询出所有空订单，即没有订单详单的订单。
-    6.查询部门表，同时显示部门的负责人姓名。
-    7.查询部门表，统计每个部门的销售总金额。
+1.查询某个员工的信息
+- 查询结果截图：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+
+2.递归查询某个员工及其所有下属，子下属员工。
+- 查询结果截图：
+![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test3/分区主表数据概览.png )
+3.查询订单表，并且包括订单的订单应收货款: Trade_Receivable= sum(订单详单表.ProductNum*订单详单表.ProductPrice)- Discount。
+4.查询订单详表，要求显示订单的客户名称和客户电话，产品类型用汉字描述。
+5.查询出所有空订单，即没有订单详单的订单。
+6.查询部门表，同时显示部门的负责人姓名。
+7.查询部门表，统计每个部门的销售总金额。
 
 
 ## 评分标准
