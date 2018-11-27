@@ -58,19 +58,19 @@ END MyPack;
     
 创建成功截图：
     ![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test5/包创建成功截图.png )
-    
+
  #2.测试：
     实现语句：
-'''sql
+ ```sql
     --测试函数Get_SaleAmount
     select count(*) from orders;
     select MyPack.Get_SaleAmount(1) AS 部门1应收金额,MyPack.Get_SaleAmount(2) AS 部门2应收金额 from dual;
-'''
+ ```
     
 运行结果截图：
     ![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test5/函数测试截图.png )
     
-'''sql
+ ```sql
     --测试过程GET_EMPLOYEES
     set serveroutput on;
 DECLARE
@@ -79,7 +79,7 @@ BEGIN
   V_EMPLOYEE_ID := 1;
   MYPACK.Get_Employees (  V_EMPLOYEE_ID => V_EMPLOYEE_ID) ;   
 END;
-'''
+ ```
     
 运行结果截图：
     ![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test5/过程测试截图.png )
