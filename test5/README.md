@@ -20,7 +20,7 @@
 4. 由于订单只是按日期分区的，上述统计是全表搜索，因此统计速度会比较慢，如何提高统计的速度呢？
 
 ## 实验过程步骤：(我的Oracle账户名： NEW_USER_WTS )
-#1.创建好包，编写程序，编译保存。
+# 1.创建好包，编写程序，编译保存。
     实现语句：
 ```sql
     create or replace PACKAGE BODY MyPack IS
@@ -59,7 +59,7 @@ END MyPack;
 创建成功截图：
     ![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test5/包创建成功截图.png )
 
- #2.测试：
+ # 2.测试：
     实现语句：
  ```sql
     --测试函数Get_SaleAmount
@@ -83,3 +83,6 @@ END;
     
 运行结果截图：
     ![运行结果](https://github.com/wtsStudy/Oracle/blob/master/test5/过程测试截图.png )
+    
+# 实验分析：
+    对于如何提高统计速度，我认为可以将订单表按照部门ID来分区，这样统计各个部门总金额时候就不会全表搜索，分区后的搜索速度更快了。
